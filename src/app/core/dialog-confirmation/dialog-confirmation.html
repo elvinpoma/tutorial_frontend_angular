@@ -1,1 +1,11 @@
-<p>dialog-confirmation works!</p>
+
+<!-- Faltaban los "()" en las llamadas a las funciones... -->
+<div class="container">
+    <h1>{{title()}}</h1>
+    <div [innerHTML]="description()" class="description"></div>
+
+    <div class="buttons">
+        <button mat-stroked-button (click)="onClose()">No</button>
+        <button mat-flat-button color="primary" (click)="onClose(true)">Sí</button>
+    </div>
+</div>    
