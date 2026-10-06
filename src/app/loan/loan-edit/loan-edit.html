@@ -1,0 +1,43 @@
+<!-- El author.id de la practica en esta version no funciona , por eso tuve que utilizar esta otra. -->
+<div class="container">
+    @if (id()) {
+        <h1>Modificar préstamo</h1>
+    } @else {
+        <h1>Crear préstamo</h1>
+    }
+
+    <form>
+        <mat-form-field>
+            <mat-label>Identificador</mat-label>
+            <input type="text" matInput placeholder="Identificador" [(ngModel)]="id" name="id" disabled>
+        </mat-form-field>
+
+        
+        <mat-form-field>
+            <mat-label>Nombre del juego</mat-label>
+            <mat-select disableRipple [(ngModel)]="gameId" name="game" required>
+                @for (game of games(); track game.id) {
+                    <mat-option [value]="game.id">{{game.title}}</mat-option>
+                }
+            </mat-select>
+            <mat-error>El juego no puede estar vacío</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nombre del Cliente</mat-label>
+            <mat-select disableRipple [(ngModel)]="clientId" name="client" required>
+                @for (client of clients(); track client.id) {
+                    <mat-option [value]="client.id">{{client.name}}</mat-option>
+                }
+            </mat-select>
+            <mat-error>El cliente no puede estar vacío</mat-error>
+        </mat-form-field>
+
+        
+    </form>
+
+    <div class="buttons">
+        <button mat-stroked-button (click)="onClose()">Cerrar</button>
+        <button mat-flat-button color="primary" (click)="onSave()">Guardar</button>
+    </div>
+</div>

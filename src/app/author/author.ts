@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { Pageable } from '../core/model/page/Pageable';
 import { Author } from './model/Author';
 import {PaginatedData} from '../core/model/page/PaginatedData';
+//Mock data no usada actualmente, pero sirve para pruebas
 import { AUTHOR_DATA } from './model/mock-authors';
 import { AUTHOR_DATA_LIST } from './model/mock-authors-list';
 import { HttpClient } from '@angular/common/http';
