@@ -36,7 +36,7 @@ export class GameList implements OnInit {
     protected readonly categories = signal<Category[]>([]);
     protected readonly games = signal<Game[]>([]);
     protected readonly filterCategory = signal<Category | null>(null);
-    protected readonly filterGame = signal<Game|null>(null);
+    protected readonly filterTitle = signal<string>('');
 
     protected readonly gameService = inject(GameService);
     protected readonly categoryService = inject(CategoryService);
@@ -51,19 +51,18 @@ export class GameList implements OnInit {
     }
 
     onCleanFilter(): void {
-        this.filterGame.set(null);
+        this.filterTitle.set('');
         this.filterCategory.set(null);
         this.onSearch();
     }
 
     onSearch(): void {
-        const gameTitle =
-            this.filterGame() != null ? this.filterGame().title : null;
+        const title = this.filterTitle();
         const categoryId =
             this.filterCategory() != null ? this.filterCategory().id : null;
 
         this.gameService
-            .getGames(gameTitle, categoryId)
+            .getGames(title, categoryId)
             .subscribe((games) => this.games.set(games));
     }
 
