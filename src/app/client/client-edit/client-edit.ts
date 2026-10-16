@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ClientService } from '../client';
 import { Client } from '../model/Client';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,9 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
     selector: 'app-client-edit',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule ],
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule],
     templateUrl: './client-edit.html',
-    styleUrl: './client-edit.scss'
+    styleUrl: './client-edit.scss',
 })
 export class ClientEdit implements OnInit {
     protected readonly dialogRef = inject(MatDialogRef<ClientEdit>);
@@ -21,6 +22,7 @@ export class ClientEdit implements OnInit {
 
     protected readonly id = signal<number | null>(null);
     protected readonly name = signal<string | null>(null);
+
 
     ngOnInit(): void {
         this.loadFormData(this.data.client ?? null);
@@ -35,14 +37,15 @@ export class ClientEdit implements OnInit {
         const id = this.id();
         const name = this.name();
 
-        if(!name) {
+        if (!name) {
             return;
         }
 
         const client = { id, name } as Client;
         this.clientService.saveClient(client).subscribe(() => {
             this.dialogRef.close(true);
-        });
+        }
+        );
     }
 
     onClose() {

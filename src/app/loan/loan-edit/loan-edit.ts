@@ -75,10 +75,10 @@ export class LoanEdit implements OnInit {
     this.loanService.saveLoan(loan).subscribe(() => {
       this.dialogRef.close(true);
     });
+    console.log(JSON.stringify(loan));
   }
 
   onClose() {
     this.dialogRef.close(false);
   }
-
 }

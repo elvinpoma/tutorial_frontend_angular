@@ -18,6 +18,10 @@ export class LoanService {
         return this.http.post<PaginatedData<Loan>>(this.baseUrl, { pageable: Pageable });
     }
 
+    getLoansFilt(title?: string, clientId?: number): Observable<Loan[]> {
+            return this.http.get<Loan[]>(this.composeFindUrl(title, clientId));
+        }
+
     saveLoan(loan: Loan): Observable<Loan> {
         const { id } = loan;
         const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
@@ -30,5 +34,20 @@ export class LoanService {
 
     getAllLoans(): Observable<Loan[]> {
         return this.http.get<Loan[]>(this.baseUrl);
+    }
+
+     private composeFindUrl(title?: string, clientId?: number, date?: string): string {
+        const params = new URLSearchParams();
+        if (title) {
+          params.set('title', title);
+        }  
+        if (clientId) {
+            params.set('idClient', clientId.toString());
+        }
+        if (date) {
+            params.set('date', date);
+        }
+        const queryString = params.toString();
+        return queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
     }
 }

@@ -33,7 +33,17 @@
             <mat-error>El cliente no puede estar vacío</mat-error>
         </mat-form-field>
 
-        
+        <mat-form-field>
+            <mat-label>Fecha de inicio</mat-label>
+            <input type="date" matInput [(ngModel)]="startDate" name="startDate" required>
+            <mat-error>La fecha de inicio no puede estar vacía</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Fecha de fin</mat-label>
+            <input type="date" matInput [(ngModel)]="endDate" name="endDate" required>
+            <mat-error>La fecha de fin no puede estar vacía</mat-error>
+        </mat-form-field>
     </form>
 
     <div class="buttons">
