@@ -13,7 +13,14 @@ import { ClientService } from '../../client/client';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule ],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+  ],
   selector: 'app-loan-edit',
   styleUrl: './loan-edit.scss',
   templateUrl: './loan-edit.html',
@@ -33,7 +40,7 @@ export class LoanEdit implements OnInit {
   protected readonly games = signal<Game[]>([]);
   protected readonly clients = signal<Client[]>([]);
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.loadFormData(this.data.loan ?? null);
   }
   loadFormData(initialData: Loan | null): void {
@@ -50,9 +57,8 @@ export class LoanEdit implements OnInit {
     this.clientService.getClients().subscribe((clients) => {
       this.clients.set(clients);
     });
-    
   }
-  
+
   onSave() {
     const id = this.id();
     const gameId = this.gameId();
@@ -63,11 +69,11 @@ export class LoanEdit implements OnInit {
     if (!gameId || !clientId || !startDate || !endDate) {
       return;
     }
-    
+
     const loan = {
       id,
-      game: this.games().find(g => g.id === gameId) ?? null,
-      client: this.clients().find(c => c.id === clientId) ?? null,
+      game: this.games().find((g) => g.id === gameId) ?? null,
+      client: this.clients().find((c) => c.id === clientId) ?? null,
       startDate,
       endDate,
     } as Loan;

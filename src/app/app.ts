@@ -3,9 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './core/header/header';
 
 @Component({
-  imports: [RouterOutlet,
-    Header
-  ],
+  imports: [RouterOutlet, Header],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

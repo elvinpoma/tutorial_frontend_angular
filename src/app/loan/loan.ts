@@ -5,49 +5,49 @@ import { HttpClient } from '@angular/common/http';
 import { Loan } from './model/Loan';
 import { PaginatedData } from '../core/model/page/PaginatedData';
 
-
 @Injectable({
-providedIn: 'root',
+  providedIn: 'root',
 })
 export class LoanService {
-    protected readonly http = inject(HttpClient);
+  protected readonly http = inject(HttpClient);
 
-    private baseUrl = 'http://localhost:8080/loan';
+  private baseUrl = 'http://localhost:8080/loan';
 
-    getLoans(Pageable: Pageable): Observable<PaginatedData<Loan>> {
-        return this.http.post<PaginatedData<Loan>>(this.baseUrl, { pageable: Pageable });
+  getLoans(Pageable: Pageable): Observable<PaginatedData<Loan>> {
+    return this.http.post<PaginatedData<Loan>>(this.baseUrl, { pageable: Pageable });
+  }
+
+  getLoansFilt(gameTitle?: string, clientId?: number, date?: string): Observable<Loan[]> {
+    console.log(this.composeFindUrl(gameTitle, clientId, date));
+    return this.http.get<Loan[]>(this.composeFindUrl(gameTitle, clientId, date));
+  }
+
+  saveLoan(loan: Loan): Observable<Loan> {
+    const { id } = loan;
+    const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
+    return this.http.put<Loan>(url, loan);
+  }
+
+  deleteLoan(idLoan: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${idLoan}`);
+  }
+
+  getAllLoans(): Observable<Loan[]> {
+    return this.http.get<Loan[]>(this.baseUrl);
+  }
+
+  private composeFindUrl(gameTitle?: string, clientId?: number, date?: string): string {
+    const params = new URLSearchParams();
+    if (gameTitle) {
+      params.set('gameTitle', gameTitle);
     }
-
-    getLoansFilt(title?: string, clientId?: number): Observable<Loan[]> {
-            return this.http.get<Loan[]>(this.composeFindUrl(title, clientId));
-        }
-
-    saveLoan(loan: Loan): Observable<Loan> {
-        const { id } = loan;
-        const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
-        return this.http.put<Loan>(url, loan);
+    if (clientId) {
+      params.set('idClient', clientId.toString());
     }
-
-    deleteLoan(idLoan: number): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/${idLoan}`);
+    if (date) {
+      params.set('date', date);
     }
-
-    getAllLoans(): Observable<Loan[]> {
-        return this.http.get<Loan[]>(this.baseUrl);
-    }
-
-     private composeFindUrl(title?: string, clientId?: number, date?: string): string {
-        const params = new URLSearchParams();
-        if (title) {
-          params.set('title', title);
-        }  
-        if (clientId) {
-            params.set('idClient', clientId.toString());
-        }
-        if (date) {
-            params.set('date', date);
-        }
-        const queryString = params.toString();
-        return queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
-    }
+    const queryString = params.toString();
+    return queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
+  }
 }

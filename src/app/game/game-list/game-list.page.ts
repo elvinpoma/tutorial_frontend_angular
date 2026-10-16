@@ -16,75 +16,70 @@ import { MatSelectModule } from '@angular/material/select';
 import { GameItem } from './game-item/game-item';
 
 @Component({
-    selector: 'app-game-list',
-    standalone: true,
-    imports: [
-        MatButtonModule,
-        MatIconModule,
-        MatTableModule,
-        CommonModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        GameItem
-    ],
-    templateUrl: './game-list.page.html',
-    styleUrl: './game-list.page.scss',
+  selector: 'app-game-list',
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    GameItem,
+  ],
+  templateUrl: './game-list.page.html',
+  styleUrl: './game-list.page.scss',
 })
 export class GameList implements OnInit {
-    protected readonly categories = signal<Category[]>([]);
-    protected readonly games = signal<Game[]>([]);
-    protected readonly filterCategory = signal<Category | null>(null);
-    protected readonly filterTitle = signal<string>('');
+  protected readonly categories = signal<Category[]>([]);
+  protected readonly games = signal<Game[]>([]);
+  protected readonly filterCategory = signal<Category | null>(null);
+  protected readonly filterTitle = signal<string>('');
 
-    protected readonly gameService = inject(GameService);
-    protected readonly categoryService = inject(CategoryService);
-    protected readonly dialog = inject(MatDialog);
+  protected readonly gameService = inject(GameService);
+  protected readonly categoryService = inject(CategoryService);
+  protected readonly dialog = inject(MatDialog);
 
-    ngOnInit(): void {
-        this.gameService.getGames().subscribe((games) => this.games.set(games));
+  ngOnInit(): void {
+    this.gameService.getGames().subscribe((games) => this.games.set(games));
 
-        this.categoryService
-            .getCategories()
-            .subscribe((categories) => this.categories.set(categories));
-    }
+    this.categoryService.getCategories().subscribe((categories) => this.categories.set(categories));
+  }
 
-    onCleanFilter(): void {
-        this.filterTitle.set('');
-        this.filterCategory.set(null);
-        this.onSearch();
-    }
+  onCleanFilter(): void {
+    this.filterTitle.set('');
+    this.filterCategory.set(null);
+    this.onSearch();
+  }
 
-    onSearch(): void {
-        const title = this.filterTitle();
-        const categoryId =
-            this.filterCategory() != null ? this.filterCategory().id : null;
+  onSearch(): void {
+    const title = this.filterTitle();
+    const categoryId = this.filterCategory() != null ? this.filterCategory().id : null;
 
-        this.gameService
-            .getGames(title, categoryId)
-            .subscribe((games) => this.games.set(games));
-    }
+    this.gameService.getGames(title, categoryId).subscribe((games) => this.games.set(games));
+  }
 
-    createGame() {
-        const dialogRef = this.dialog.open(GameEdit, {
-            data: {},
-        });
+  createGame() {
+    const dialogRef = this.dialog.open(GameEdit, {
+      data: {},
+    });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if(!result) return;
-            this.onSearch();
-        });
-    }
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.onSearch();
+    });
+  }
 
-    editGame(game: Game) {
-        const dialogRef = this.dialog.open(GameEdit, {
-            data: { game: game },
-        });
+  editGame(game: Game) {
+    const dialogRef = this.dialog.open(GameEdit, {
+      data: { game: game },
+    });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if(!result) return;
-            this.onSearch();
-        });
-    }
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.onSearch();
+    });
+  }
 }

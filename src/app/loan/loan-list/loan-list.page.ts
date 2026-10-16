@@ -38,14 +38,13 @@ import { Pageable } from '../../core/model/page/Pageable';
     MatSelectModule,
 
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
   ],
   selector: 'app-loan-list',
   styleUrl: './loan-list.page.scss',
   templateUrl: './loan-list.page.html',
 })
 export class LoanList implements OnInit {
-  
   protected readonly loans = signal<Loan[]>([]);
   protected readonly games = signal<Game[]>([]);
   protected readonly clients = signal<Client[]>([]);
@@ -53,8 +52,8 @@ export class LoanList implements OnInit {
   protected readonly gameService = inject(GameService);
 
   protected readonly filterClient = signal<Client | null>(null);
-  protected readonly filterGame = signal<Game | null>(null);
-  protected readonly filterData = signal<String>('');
+  protected readonly filterGame = signal<string>('');
+  protected readonly filterDate = signal<Date | null>(null);
 
   protected readonly loanService = inject(LoanService);
   protected readonly dialog = inject(MatDialog);
@@ -68,24 +67,29 @@ export class LoanList implements OnInit {
 
   ngOnInit(): void {
     this.loadPage();
-     this.gameService.getGames().subscribe((games) => this.games.set(games));
-     this.clientService.getClients().subscribe((clients) => this.clients.set(clients));
-
+    this.gameService.getGames().subscribe((games) => this.games.set(games));
+    this.clientService.getClients().subscribe((clients) => this.clients.set(clients));
   }
   onCleanFilter(): void {
     this.filterGame.set(null);
     this.filterClient.set(null);
-    this.filterData.set('');
+    this.filterDate.set(null);
     this.onSearch();
   }
 
   onSearch(): void {
-    const title = this.filterGame().title;
-    const clientId = this.filterClient() != null ? this.filterClient().id : null;
+    const title = this.filterGame();
+    const clientId = this.filterClient() != null ? this.filterClient()?.id : null;
+    const date = this.filterDate() ? this.filterDate().toISOString().split('T')[0] : null;
+    console.log('title:', title);
+    console.log('clientId:', clientId);
+    console.log('date:', date);
 
-    this.loanService
-    .getLoansFilt(title,clientId)
-    .subscribe((loans) => this.loans.set(loans));
+    // Comprobacion para ver si es formato Date o string console.log("Fecha:", date); luego lo pararemos a string yyy-mm-dd
+
+    this.loanService.getLoansFilt(title, clientId, date).subscribe((loans) => {
+      this.dataSource.data = loans;
+    });
   }
   loadPage(event?: PageEvent) {
     const pageable: Pageable = {

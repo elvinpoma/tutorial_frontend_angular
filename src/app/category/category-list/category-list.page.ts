@@ -51,7 +51,6 @@ export class CategoryList implements OnInit {
    *
    */
 
-
   editCategory(category: Category) {
     const dialogRef = this.dialog.open(CategoryEdit, {
       data: { category },

@@ -28,9 +28,7 @@ export class ClientList implements OnInit {
   }
 
   private loadData(): void {
-    this.clientService
-      .getClients()
-      .subscribe((clients) => (this.dataSource.data = clients));
+    this.clientService.getClients().subscribe((clients) => (this.dataSource.data = clients));
   }
 
   /**
@@ -52,7 +50,6 @@ export class ClientList implements OnInit {
    * @param client
    *
    */
-
 
   editClient(client: Client) {
     const dialogRef = this.dialog.open(ClientEdit, {
