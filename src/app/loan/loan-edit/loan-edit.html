@@ -34,13 +34,29 @@
 
     <mat-form-field>
       <mat-label>Fecha de inicio</mat-label>
-      <input type="date" matInput [(ngModel)]="startDate" name="startDate" required />
+
+      <input
+        matInput
+        [matDatepicker]="pickerStart"
+        [(ngModel)]="startDate"
+        name="startDate"
+        required
+      />
+
+      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+
       <mat-error>La fecha de inicio no puede estar vacía</mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Fecha de fin</mat-label>
-      <input type="date" matInput [(ngModel)]="endDate" name="endDate" required />
+
+      <input matInput [matDatepicker]="pickerEnd" [(ngModel)]="endDate" name="endDate" required />
+
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+
       <mat-error>La fecha de fin no puede estar vacía</mat-error>
     </mat-form-field>
   </form>

@@ -11,6 +11,8 @@ import { Client } from '../../client/model/Client';
 import { GameService } from '../../game/game';
 import { ClientService } from '../../client/client';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   imports: [
@@ -20,6 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   selector: 'app-loan-edit',
   styleUrl: './loan-edit.scss',
@@ -35,8 +39,8 @@ export class LoanEdit implements OnInit {
   protected readonly id = signal<number | null>(null);
   protected readonly gameId = signal<number | null>(null);
   protected readonly clientId = signal<number | null>(null);
-  protected readonly startDate = signal<string | null>(null);
-  protected readonly endDate = signal<string | null>(null);
+  protected readonly startDate = signal<Date | null>(null);
+  protected readonly endDate = signal<Date | null>(null);
   protected readonly games = signal<Game[]>([]);
   protected readonly clients = signal<Client[]>([]);
 
@@ -47,8 +51,8 @@ export class LoanEdit implements OnInit {
     this.id.set(initialData?.id ?? null);
     this.gameId.set(initialData?.game.id ?? null);
     this.clientId.set(initialData?.client.id ?? null);
-    this.startDate.set(initialData?.startDate ?? null);
-    this.endDate.set(initialData?.endDate ?? null);
+    this.startDate.set(initialData?.startDate ? new Date(initialData.startDate) : null);
+    this.endDate.set(initialData?.endDate ? new Date(initialData.endDate) : null);
 
     this.gameService.getGames().subscribe((games) => {
       this.games.set(games);
@@ -57,6 +61,13 @@ export class LoanEdit implements OnInit {
     this.clientService.getClients().subscribe((clients) => {
       this.clients.set(clients);
     });
+  }
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   onSave() {
@@ -74,8 +85,8 @@ export class LoanEdit implements OnInit {
       id,
       game: this.games().find((g) => g.id === gameId) ?? null,
       client: this.clients().find((c) => c.id === clientId) ?? null,
-      startDate,
-      endDate,
+      startDate: this.formatDate(startDate),
+      endDate: this.formatDate(endDate),
     } as Loan;
 
     this.loanService.saveLoan(loan).subscribe(() => {
