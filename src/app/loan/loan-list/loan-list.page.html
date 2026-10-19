@@ -4,14 +4,15 @@
   <div class="filters">
     <form>
       <mat-form-field>
-        <mat-label>Nombre del Juego</mat-label>
-        <input
-          type="text"
-          matInput
-          placeholder="Título del juego"
-          [(ngModel)]="filterGame"
-          name="game"
-        />
+        <mat-label>Juego</mat-label>
+
+        <mat-select disableRipple [(ngModel)]="filterGame" name="game">
+          @for (game of games(); track game.id) {
+            <mat-option [value]="game">
+              {{ game.title }}
+            </mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field>

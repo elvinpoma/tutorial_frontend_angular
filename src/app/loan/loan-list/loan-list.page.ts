@@ -52,7 +52,7 @@ export class LoanList implements OnInit {
   protected readonly gameService = inject(GameService);
 
   protected readonly filterClient = signal<Client | null>(null);
-  protected readonly filterGame = signal<string>('');
+  protected readonly filterGame = signal<Game| null>(null);
   protected readonly filterDate = signal<Date | null>(null);
 
   protected readonly loanService = inject(LoanService);
@@ -78,12 +78,12 @@ export class LoanList implements OnInit {
   }
 
   onSearch(): void {
-    const title = this.filterGame();
+    const title = this.filterGame() != null ? this.filterGame()!.title: null;
     const clientId = this.filterClient() != null ? this.filterClient()?.id : null;
     const date = this.filterDate() ? this.filterDate().toISOString().split('T')[0] : null;
-    console.log('title:', title);
-    console.log('clientId:', clientId);
-    console.log('date:', date);
+    //console.log('title:', title);
+    //console.log('clientId:', clientId);
+    //console.log('date:', date);
 
     // Comprobacion para ver si es formato Date o string console.log("Fecha:", date); luego lo pararemos a string yyy-mm-dd
 
