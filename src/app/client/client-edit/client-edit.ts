@@ -23,7 +23,17 @@ import { validateFields } from '../../core/helpers/validation';
   templateUrl: './client-edit.html',
   styleUrl: './client-edit.scss',
 })
+
+/**
+ * Componente encargado de crear y editar clientes
+ * mediante un diálogo modal.
+ */
+
 export class ClientEdit implements OnInit {
+
+  /**
+   * Servicios, referencias, datos recibidos y señales para la pagina
+   */
   protected readonly dialogRef = inject(MatDialogRef<ClientEdit>);
   protected readonly data = inject(MAT_DIALOG_DATA) as { client: Client };
   protected readonly clientService = inject(ClientService);
@@ -31,14 +41,30 @@ export class ClientEdit implements OnInit {
   protected readonly id = signal<number | null>(null);
   protected readonly name = signal<string | null>(null);
 
+  /**
+   * Inicializa el formulario cargando los datos del cliente
+   * cuando se realiza una edición.
+   */
+
   ngOnInit(): void {
     this.loadFormData(this.data.client ?? null);
   }
+
+  /**
+   * Carga los datos del cliente recibido en el formulario.
+   *
+   * @param initialData Cliente a editar o null para crear uno nuevo.
+   */
 
   loadFormData(initialData: Client | null): void {
     this.id.set(initialData?.id ?? null);
     this.name.set(initialData?.name ?? null);
   }
+
+  /**
+   * Valida los datos introducidos y guarda el cliente
+   * en el sistema.
+   */
 
   onSave() {
     const id = this.id();
@@ -57,6 +83,10 @@ export class ClientEdit implements OnInit {
     });
   }
 
+  /**
+   * Cierra el diálogo sin guardar cambios.
+   */
+  
   onClose() {
     this.dialogRef.close();
   }

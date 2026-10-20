@@ -29,7 +29,18 @@ import { MatNativeDateModule } from '@angular/material/core';
   styleUrl: './loan-edit.scss',
   templateUrl: './loan-edit.html',
 })
+
+/**
+ * Componente encargado de crear y editar préstamos
+ * mediante un diálogo modal.
+ */
+
 export class LoanEdit implements OnInit {
+
+/**
+ * Servicios y señales para los dialogos y la logica de la pagina  
+ */
+
   protected readonly loanService = inject(LoanService);
   protected readonly dialogRef = inject(MatDialogRef<LoanEdit>);
   protected readonly data = inject(MAT_DIALOG_DATA);
@@ -44,9 +55,22 @@ export class LoanEdit implements OnInit {
   protected readonly games = signal<Game[]>([]);
   protected readonly clients = signal<Client[]>([]);
 
+  /**
+   * Inicializa el formulario con los datos recibidos,
+   * en caso de edición.
+   */
+
   ngOnInit(): void {
     this.loadFormData(this.data.loan ?? null);
   }
+
+  /**
+   * Carga los datos del préstamo en el formulario y
+   * recupera la información necesaria para los desplegables.
+   *
+   * @param initialData Préstamo a editar o null para crear uno nuevo.
+   */
+
   loadFormData(initialData: Loan | null): void {
     this.id.set(initialData?.id ?? null);
     this.gameId.set(initialData?.game.id ?? null);
@@ -62,13 +86,27 @@ export class LoanEdit implements OnInit {
       this.clients.set(clients);
     });
   }
+
+  /**
+   * Convierte una fecha al formato yyyy-MM-dd,
+   * requerido por el backend.
+   *
+   * @param date Fecha a formatear.
+   * @returns Fecha en formato yyyy-MM-dd.
+   */
+
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
-  }
+  } 
+
+  /**
+   * Recoge los datos introducidos en el formulario y
+   * guarda el préstamo en el sistema.
+   */
 
   onSave() {
     const id = this.id();
@@ -94,6 +132,10 @@ export class LoanEdit implements OnInit {
     });
     console.log(JSON.stringify(loan));
   }
+
+  /**
+   * Cierra el diálogo sin guardar cambios.
+   */
 
   onClose() {
     this.dialogRef.close(false);

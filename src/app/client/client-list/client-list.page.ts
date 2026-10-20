@@ -17,22 +17,57 @@ import { DialogConfirmation } from '../../core/dialog-confirmation/dialog-confir
   styleUrl: './client-list.page.scss',
   templateUrl: './client-list.page.html',
 })
+
+/**
+ * Componente encargado de mostrar, crear, editar
+ * y eliminar clientes.
+ */
+
 export class ClientList implements OnInit {
+  
+  /**
+   * Fuente de datos utilizada por la tabla de clientes.
+   */
+  
   dataSource = new MatTableDataSource<Client>();
+  
+  /**
+   * Columnas que se mostrarán en la tabla.
+   */
+
   displayedColumns: string[] = ['id', 'name', 'action'];
 
+  /**
+   * Servicio encargado de las operaciones sobre clientes.
+   */
+
   protected readonly clientService = inject(ClientService);
+  
+  /**
+   * Servicio utilizado para gestionar los diálogos modales.
+   */
+
   protected readonly dialog = inject(MatDialog);
+  
+  /**
+   * Inicializa el componente cargando los clientes disponibles.
+   */
+
   ngOnInit(): void {
     this.loadData();
   }
+
+  /**
+   * Obtiene la lista de clientes y actualiza la tabla.
+   */
 
   private loadData(): void {
     this.clientService.getClients().subscribe((clients) => (this.dataSource.data = clients));
   }
 
   /**
-   * Creates a new client.
+   * Abre el diálogo para crear un nuevo cliente.
+   * Tras guardarlo, recarga la información de la tabla.
    */
   createClient() {
     const dialogRef = this.dialog.open(ClientEdit, {
@@ -46,9 +81,9 @@ export class ClientList implements OnInit {
   }
 
   /**
-   * This method is used to edit a client.
-   * @param client
+   * Abre el diálogo para editar un cliente existente.
    *
+   * @param client Cliente que se desea editar.
    */
 
   editClient(client: Client) {
@@ -63,9 +98,11 @@ export class ClientList implements OnInit {
   }
 
   /**
-   * This method is used to delete a client.
-   * @param client
+   * Muestra un diálogo de confirmación y elimina
+   * el cliente seleccionado si el usuario confirma
+   * la operación.
    *
+   * @param client Cliente que se desea eliminar.
    */
 
   deleteClient(client: Client) {

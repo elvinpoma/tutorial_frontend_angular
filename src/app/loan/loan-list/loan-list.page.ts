@@ -45,6 +45,10 @@ import { Pageable } from '../../core/model/page/Pageable';
   templateUrl: './loan-list.page.html',
 })
 export class LoanList implements OnInit {
+  /**
+   * Señales que se usaran en la aplicación 
+   * Tanto filtros, paginados, dialogos y los datos a manipular
+   */
   protected readonly loans = signal<Loan[]>([]);
   protected readonly games = signal<Game[]>([]);
   protected readonly clients = signal<Client[]>([]);
@@ -65,17 +69,32 @@ export class LoanList implements OnInit {
   dataSource = new MatTableDataSource<Loan>();
   displayedColumns: string[] = ['id', 'game', 'client', 'startDate', 'endDate', 'action'];
 
+  /**
+   * Inicializa el componente cargando la primera página
+   * de préstamos y los datos necesarios para los filtros.
+   */
+
   ngOnInit(): void {
     this.loadPage();
     this.gameService.getGames().subscribe((games) => this.games.set(games));
     this.clientService.getClients().subscribe((clients) => this.clients.set(clients));
   }
+
+  /**
+   * Limpia todos los filtros aplicados y recarga la búsqueda.
+   */
+
   onCleanFilter(): void {
     this.filterGame.set(null);
     this.filterClient.set(null);
     this.filterDate.set(null);
     this.onSearch();
   }
+
+  /**
+   * Realiza una búsqueda de préstamos utilizando
+   * los filtros seleccionados por el usuario.
+   */
 
   onSearch(): void {
     const title = this.filterGame() != null ? this.filterGame()!.title: null;
@@ -91,6 +110,14 @@ export class LoanList implements OnInit {
       this.dataSource.data = loans;
     });
   }
+
+  /**
+   * Carga una página de préstamos utilizando la paginación
+   * configurada actualmente o la recibida desde el paginador.
+   *
+   * @param event Evento de cambio de página.
+   */
+
   loadPage(event?: PageEvent) {
     const pageable: Pageable = {
       pageNumber: this.pageNumber,
@@ -117,7 +144,8 @@ export class LoanList implements OnInit {
   }
 
   /**
-   * Creates a new loan.
+   * Abre el diálogo para crear un nuevo préstamo.
+   * Tras cerrarse el diálogo se recargan los datos.
    */
   createLoan() {
     const dialogRef = this.dialog.open(LoanEdit, {
@@ -130,10 +158,11 @@ export class LoanList implements OnInit {
   }
 
   /**
-   * This method is used to edit a loan.
-   * @param loan
+   * Abre el diálogo de edición del préstamo seleccionado.
    *
+   * @param loan Préstamo que se desea editar.
    */
+
   editLoan(loan: Loan) {
     const dialogRef = this.dialog.open(LoanEdit, {
       data: { loan: loan },
@@ -143,6 +172,14 @@ export class LoanList implements OnInit {
       this.ngOnInit();
     });
   }
+
+  /**
+   * Muestra un diálogo de confirmación y elimina
+   * el préstamo seleccionado si el usuario confirma
+   * la operación.
+   *
+   * @param loan Préstamo que se desea eliminar.
+   */
 
   deleteLoan(loan: Loan) {
     const dialogRef = this.dialog.open(DialogConfirmation, {
