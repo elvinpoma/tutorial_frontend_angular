@@ -65,6 +65,8 @@ export class LoanList implements OnInit {
   pageNumber: number = 0;
   pageSize: number = 5;
   totalElements: number = 0;
+  // La búsqueda filtrada devuelve una lista completa, que se pagina en el cliente.
+  private searchResults: Loan[] | null = null;
 
   dataSource = new MatTableDataSource<Loan>();
   displayedColumns: string[] = ['id', 'game', 'client', 'startDate', 'endDate', 'action'];
@@ -92,33 +94,49 @@ export class LoanList implements OnInit {
   }
 
   /**
-   * Realiza una búsqueda de préstamos utilizando
-   * los filtros seleccionados por el usuario.
+   * Busca préstamos con los filtros seleccionados y vuelve a la primera página,
+   * manteniendo el tamaño elegido en el paginador. Si no queda ningún filtro
+   * activo, recupera los préstamos mediante el endpoint paginado.
    */
 
   onSearch(): void {
-    const title = this.filterGame() != null ? this.filterGame()!.title: null;
-    const clientId = this.filterClient() != null ? this.filterClient()?.id : null;
+    const title = this.filterGame()?.title ?? null;
+    const clientId = this.filterClient()?.id ?? null;
     const date = this.filterDate() ? this.filterDate().toISOString().split('T')[0] : null;
-    //console.log('title:', title);
-    //console.log('clientId:', clientId);
-    //console.log('date:', date);
 
-    // Comprobacion para ver si es formato Date o string console.log("Fecha:", date); luego lo pararemos a string yyy-mm-dd
+    this.pageNumber = 0;
 
-    this.loanService.getLoansFilt(title, clientId, date).subscribe((loans) => {
-      this.dataSource.data = loans;
+    if (title === null && clientId === null && date === null) {
+      this.searchResults = null;
+      this.loadPage();
+      return;
+    }
+
+    this.loanService.getLoansFilt(title ?? undefined, clientId ?? undefined, date ?? undefined).subscribe((loans) => {
+      this.searchResults = loans;
+      this.totalElements = loans.length;
+      this.updateSearchPage();
     });
   }
 
   /**
-   * Carga una página de préstamos utilizando la paginación
-   * configurada actualmente o la recibida desde el paginador.
+   * Carga la página solicitada. Para resultados filtrados, pagina localmente
+   * la lista completa; sin filtros, solicita la página al backend.
    *
    * @param event Evento de cambio de página.
    */
 
   loadPage(event?: PageEvent) {
+    if (event != null) {
+      this.pageSize = event.pageSize;
+      this.pageNumber = event.pageIndex;
+    }
+
+    if (this.searchResults !== null) {
+      this.updateSearchPage();
+      return;
+    }
+
     const pageable: Pageable = {
       pageNumber: this.pageNumber,
       pageSize: this.pageSize,
@@ -130,17 +148,22 @@ export class LoanList implements OnInit {
       ],
     };
 
-    if (event != null) {
-      pageable.pageSize = event.pageSize;
-      pageable.pageNumber = event.pageIndex;
-    }
-
     this.loanService.getLoans(pageable).subscribe((data) => {
       this.dataSource.data = data.content;
       this.pageNumber = data.pageable.pageNumber;
       this.pageSize = data.pageable.pageSize;
       this.totalElements = data.totalElements;
     });
+  }
+
+  private updateSearchPage(): void {
+    if (this.searchResults === null) {
+      return;
+    }
+
+    // Se conserva la lista completa para poder cambiar de página sin repetir la búsqueda.
+    const startIndex = this.pageNumber * this.pageSize;
+    this.dataSource.data = this.searchResults.slice(startIndex, startIndex + this.pageSize);
   }
 
   /**
